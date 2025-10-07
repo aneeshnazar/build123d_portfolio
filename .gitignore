@@ -1,0 +1,12 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+src/build123d_portfolio/notebooks/.ipynb_checkpoints
+src/build123d_portfolio/notebooks/outputs
