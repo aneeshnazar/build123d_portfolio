@@ -416,6 +416,12 @@ wheels = [
 name = "components"
 version = "0.1.0"
 source = { editable = "packages/components" }
+dependencies = [
+    { name = "build123d" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "build123d", specifier = ">=0.9.1" }]
 
 [[package]]
 name = "contourpy"
@@ -2288,6 +2294,12 @@ wheels = [
 name = "utilities"
 version = "0.1.0"
 source = { editable = "packages/utilities" }
+dependencies = [
+    { name = "build123d" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "build123d", specifier = ">=0.9.1" }]
 
 [[package]]
 name = "vtk"
