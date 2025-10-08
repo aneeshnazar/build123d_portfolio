@@ -1102,9 +1102,6 @@ c.ServerApp.root_dir = 'src/build123d_portfolio/notebooks'
 
 ## Supply overrides for terminado. Currently only supports "shell_command".
 #  Default: {}
-c.ServerApp.terminado_settings = {
-    "shell_command": ["C:\Windows\System32\WindowsPowerShell\\v1.0\powershell.exe"]
-}
 
 ## Set to False to disable terminals.
 #  
