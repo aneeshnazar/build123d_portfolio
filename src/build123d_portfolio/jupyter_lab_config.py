@@ -959,7 +959,7 @@ c.LabApp.open_browser = False
 #         Local IP addresses (such as 127.0.0.1 and ::1) are automatically accepted
 #         as local as well.
 #  Default: ['localhost']
-# c.ServerApp.local_hostnames = ['localhost']
+c.ServerApp.local_hostnames = ['localhost', "build123d_portfolio.local"]
 
 ## The date format used by logging formatters for %(asctime)s
 #  See also: Application.log_datefmt
