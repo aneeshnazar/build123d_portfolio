@@ -1,6 +1,6 @@
 import math
 
-from build123d import BasePartObject, BuildPart, VectorLike, Mode, validate_inputs, Solid, Face, Wire, Plane, ShapeList, Part
+from build123d import BasePartObject, BuildPart, RotationLike, Mode, validate_inputs, Solid, Face, Wire, Plane, ShapeList, Part
 
 class HexBoreHole(BasePartObject):
     _applies_to = [BuildPart._tag]
@@ -11,7 +11,7 @@ class HexBoreHole(BasePartObject):
         hex_radius: float,
         counter_bore_depth: float,
         depth: float | None = None,
-        rotation: VectorLike = (0, 0, 0),
+        rotation: RotationLike = (0, 0, 0),
         mode: Mode = Mode.SUBTRACT
     ):
         context: BuildPart | None = BuildPart._get_context(self)
