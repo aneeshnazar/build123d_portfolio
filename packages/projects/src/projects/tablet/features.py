@@ -1,5 +1,5 @@
 from itertools import product
-from build123d import Align, Axis, BasePartObject, Box, BuildPart, Cylinder, Face, Locations, Mode, Vector, VectorLike, fillet
+from build123d import Align, Axis, BasePartObject, Box, BuildPart, Cylinder, Face, Locations, Mode, Plane, Vector, VectorLike, fillet
 
 
 class TabletFeature(BasePartObject):
@@ -51,14 +51,21 @@ class Button(TabletFeature):
         offset : tuple[float, float],
         align : tuple[Align, Align, Align] = (Align.CENTER, Align.CENTER, Align.MIN)
     ):
-        size_vector = Vector(size)
-        pos = self.get_relative_position(face, size, offset, align[:2])
-        with BuildPart(face) as b:
-            with Locations(pos):
-                b1 = Box(size_vector.X, size_vector.Y, size_vector.Z, align=(Align.CENTER, Align.CENTER, align[2]))
+        self.size_vector = Vector(size)
+        self.pos = self.get_relative_position(face, size, offset, align[:2])
+        self.plane = Plane(face)
+        with BuildPart(self.plane) as b:
+            with Locations(self.pos):
+                b1 = Box(self.size_vector.X, self.size_vector.Y, self.size_vector.Z, align=(Align.CENTER, Align.CENTER, align[2]))
                 a = Axis(face.center(), face.normal_at(0.5,0.5))
                 fillet(b1.edges().filter_by(a), min(size) / 3)
         super().__init__(part=b.solid(), rotation=(0,0,0), mode=Mode.ADD)
+    
+    def cutter(self, margin):
+        with BuildPart(self.plane) as b:
+            with Locations(self.pos):
+                b1 = Box(self.size_vector.X + margin, self.size_vector.Y + margin, self.size_vector.Z * 2, align=(Align.CENTER, Align.CENTER, Align.CENTER))
+        return b.solid()
 
 class Port(TabletFeature):
     def __init__(
@@ -68,14 +75,21 @@ class Port(TabletFeature):
         offset : tuple[float, float],
         align : tuple[Align, Align, Align] = (Align.CENTER, Align.CENTER, Align.MIN)
     ):
-        size_vector = Vector(size)
-        pos = self.get_relative_position(face, size, offset, align[:2])
-        with BuildPart(face) as b:
-            with Locations(pos):
-                b1 = Box(size_vector.X, size_vector.Y, size_vector.Z, align=(Align.CENTER, Align.CENTER, align[2]))
+        self.size_vector = Vector(size)
+        self.pos = self.get_relative_position(face, size, offset, align[:2])
+        self.plane = Plane(face)
+        with BuildPart(self.plane) as b:
+            with Locations(self.pos):
+                b1 = Box(self.size_vector.X, self.size_vector.Y, self.size_vector.Z, align=(Align.CENTER, Align.CENTER, align[2]))
                 a = Axis(face.center(), face.normal_at(0.5,0.5))
                 fillet(b1.edges().filter_by(a), min(size) / 3)
         super().__init__(part=b.solid(), rotation=(0,0,0), mode=Mode.SUBTRACT)
+
+    def cutter(self, margin):
+        with BuildPart(self.plane) as b:
+            with Locations(self.pos):
+                b1 = Box(self.size_vector.X + margin, self.size_vector.Y + margin, self.size_vector.Z * 2, align=(Align.CENTER, Align.CENTER, Align.CENTER))
+        return b.solid()
 
 class CameraBump(TabletFeature):
     def __init__(
@@ -86,8 +100,16 @@ class CameraBump(TabletFeature):
         offset : tuple[float, float],
         align : tuple[Align, Align, Align] = (Align.CENTER, Align.CENTER, Align.MIN)
     ):
-        pos = self.get_relative_position(face, [radius * 2, radius * 2], offset, align[:2])
-        with BuildPart(face) as b:
-            with Locations((pos[1], pos[0])):
-                Cylinder(radius, thickness, align=(Align.CENTER, Align.CENTER, align[2]))
+        self.pos = self.get_relative_position(face, [radius * 2, radius * 2], offset, align[:2])
+        self.radius, self.thickness = radius, thickness
+        self.plane = Plane(face)
+        with BuildPart(self.plane) as b:
+            with Locations((self.pos[1], self.pos[0])):
+                Cylinder(self.radius, self.thickness, align=(Align.CENTER, Align.CENTER, align[2]))
         super().__init__(part=b.solid(), rotation=(0,0,0), mode=Mode.ADD)
+
+    def cutter(self, margin):
+        with BuildPart(self.plane) as b:
+            with Locations((self.pos[1], self.pos[0])):
+                Cylinder(self.radius + margin, self.thickness + margin, align=(Align.CENTER, Align.CENTER, Align.MIN))
+        return b.solid()
